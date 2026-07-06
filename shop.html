@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHOP — PERFECTMOOD</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --ink:#111; --sub:#777; --line:#e5e2dd; --bg:#fff; --soft:#f6f4f1;
+  --accent:#111;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.6}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+
+/* ── header ── */
+.hd{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd__in{max-width:1240px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.hd__logo{font-weight:800;letter-spacing:.22em;font-size:15px}
+.hd__nav{display:flex;gap:22px;font-size:12px;letter-spacing:.14em;color:var(--sub)}
+.hd__nav a:hover{color:var(--ink)}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ── list view ── */
+.list-head{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.list-head h1{font-size:clamp(30px,5vw,52px);font-weight:800;letter-spacing:.08em}
+.list-head p{margin-top:10px;color:var(--sub);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px 24px;padding:48px 0 96px}
+.card{cursor:pointer;position:relative}
+.card__ph{aspect-ratio:4/5;overflow:hidden;background:var(--soft)}
+.card__ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.card:hover .card__ph img{transform:scale(1.04)}
+.card__brand{margin-top:14px;font-size:11px;letter-spacing:.16em;color:var(--sub)}
+.card__name{margin-top:4px;font-size:15px;font-weight:600;line-height:1.4}
+.card__price{margin-top:6px;font-size:14px;font-weight:700}
+.card__del{position:absolute;top:8px;right:8px;z-index:5;width:28px;height:28px;border:0;border-radius:50%;background:rgba(17,17,17,.85);color:#fff;font-size:13px}
+
+/* ── views ── */
+#detailView{display:none}
+body.mode-detail #listView{display:none}
+body.mode-detail #detailView{display:block}
+.product{display:none}
+.product.active{display:block}
+
+/* ── detail top ── */
+.backbar{padding:26px 0 0}
+.backbar button{background:none;border:0;font-size:12px;letter-spacing:.14em;color:var(--sub)}
+.backbar button:hover{color:var(--ink)}
+.p-top{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:56px;padding:28px 0 72px}
+.p-main{aspect-ratio:4/5;background:var(--soft);overflow:hidden}
+.p-main img{width:100%;height:100%;object-fit:cover}
+.p-thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:flex-start}
+.tw{position:relative;width:72px}
+.tw .thumb{width:72px;height:90px;object-fit:cover;cursor:pointer;opacity:.55;transition:opacity .25s;background:var(--soft)}
+.tw .thumb.cur,.tw .thumb:hover{opacity:1}
+.tw .tw-del{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border:0;border-radius:50%;background:#111;color:#fff;font-size:10px;line-height:1}
+
+.p-info{padding-top:8px}
+.p-brand{font-size:12px;letter-spacing:.2em;color:var(--sub)}
+.p-name{margin-top:10px;font-size:clamp(20px,2.6vw,28px);font-weight:700;line-height:1.35}
+.p-pricebox{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+.p-price-was{font-size:14px;color:#b5b0a9;text-decoration:line-through}
+.p-price{margin-top:2px;font-size:24px;font-weight:800;letter-spacing:.01em}
+.p-desc{margin-top:22px;font-size:14px;color:#444;line-height:1.8}
+.p-meta{margin-top:26px;border-top:1px solid var(--line)}
+.p-meta > div{display:flex;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+.p-meta dt{width:96px;flex:none;color:var(--sub)}
+.p-meta dd{color:#333}
+.p-actions{display:flex;gap:10px;margin-top:30px}
+.btn{flex:1;display:flex;align-items:center;justify-content:center;height:54px;font-size:13px;letter-spacing:.12em;border:1px solid var(--ink);transition:all .25s}
+.btn--fill{background:var(--ink);color:#fff}
+.btn--fill:hover{background:#333;border-color:#333}
+.btn--ghost:hover{background:var(--soft)}
+
+/* ── detail body ── */
+.p-detail{border-top:1px solid var(--line);padding:72px 0 40px;max-width:820px;margin:0 auto}
+.p-detail__label{font-size:12px;letter-spacing:.24em;color:var(--sub);text-align:center}
+.d-blocks{margin-top:48px;display:flex;flex-direction:column;gap:44px}
+.d-block{position:relative}
+.d-block h3{font-size:18px;font-weight:700;margin-bottom:12px;letter-spacing:.02em}
+.d-block p{font-size:15px;line-height:2;color:#3a3a3a}
+.d-block.d-img img{width:100%;background:var(--soft)}
+.d-block .cap{margin-top:10px;font-size:12px;color:var(--sub);text-align:center;line-height:1.6}
+.d-tools{position:absolute;top:-14px;right:0;display:flex;gap:6px}
+.d-tools button{width:26px;height:26px;border:0;border-radius:50%;background:#111;color:#fff;font-size:11px}
+.d-add{display:flex;gap:10px;justify-content:center;margin-top:40px}
+.d-add button{border:1px dashed #bbb;background:#fff;color:#666;font-size:12px;padding:10px 18px;letter-spacing:.06em}
+
+/* ── notice ── */
+.p-notice{max-width:820px;margin:0 auto;padding:40px 0 110px}
+.p-notice details{border-top:1px solid var(--line)}
+.p-notice details:last-child{border-bottom:1px solid var(--line)}
+.p-notice summary{list-style:none;cursor:pointer;padding:18px 4px;font-size:13px;font-weight:700;letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center}
+.p-notice summary::-webkit-details-marker{display:none}
+.p-notice summary::after{content:"+";font-weight:400;color:var(--sub)}
+.p-notice details[open] summary::after{content:"–"}
+.n-body{padding:2px 4px 22px;font-size:13px;color:#555;line-height:1.9}
+
+/* ── footer ── */
+.ft{border-top:1px solid var(--line);padding:40px 24px 60px;text-align:center;color:var(--sub);font-size:12px;letter-spacing:.06em}
+.ft b{color:var(--ink);letter-spacing:.2em}
+#editBtn{margin-top:18px;background:none;border:0;color:#c9c5bf;font-size:11px;letter-spacing:.2em}
+#editBtn:hover{color:var(--ink)}
+
+/* ── edit mode ── */
+body.editing [data-e]{outline:1px dashed rgba(200,60,30,.5);outline-offset:3px;min-height:1em}
+body.editing [data-e]:focus{outline:2px solid rgba(200,60,30,.85)}
+body.editing img{cursor:crosshair}
+body.editing .card__ph img{cursor:crosshair}
+#editBar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:200;display:flex;gap:8px;background:#111;padding:10px 12px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#editBar button{border:0;border-radius:999px;padding:9px 16px;font-size:12px;letter-spacing:.04em;background:#2b2b2b;color:#eee}
+#editBar button:hover{background:#3d3d3d}
+#editBar button.primary{background:#fff;color:#111;font-weight:700}
+.edit-hint{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(17,17,17,.9);color:#fff;font-size:12px;padding:8px 16px;border-radius:999px;letter-spacing:.04em}
+
+/* ── responsive ── */
+@media (max-width:960px){
+  .p-top{grid-template-columns:1fr;gap:34px;padding-bottom:56px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:28px 14px}
+}
+@media (max-width:560px){
+  .list-head{padding:48px 0 28px}
+  .hd__nav{gap:14px}
+  .p-actions{flex-direction:column}
+  .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd__in">
+    <a class="hd__logo" href="https://perfectmood-kr.github.io" data-e>PERFECTMOOD</a>
+    <nav class="hd__nav">
+      <a href="https://perfectmood-kr.github.io">HOME</a>
+      <a href="#" id="navShop">SHOP</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════════ LIST VIEW ══════════ -->
+<main id="listView">
+  <div class="wrap">
+    <div class="list-head">
+      <h1 data-e>SHOP</h1>
+      <p data-e>퍼펙트무드가 셀렉트한 오브제와 가구를 소개합니다.</p>
+    </div>
+    <div class="grid" id="listGrid"></div>
+  </div>
+</main>
+
+<!-- ══════════ DETAIL VIEW ══════════ -->
+<main id="detailView">
+  <div class="wrap">
+    <div class="backbar"><button id="backBtn" type="button">← SHOP 목록으로</button></div>
+    <div id="products">
+
+      <!-- ── product 1 ── -->
+      <article class="product active" data-pid="p1">
+        <div class="p-top">
+          <div class="p-gallery">
+            <div class="p-main"><img class="p-mainimg" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23ECEAE6'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3EIMAGE%2001%3C/text%3E%3C/svg%3E"></div>
+            <div class="p-thumbs">
+              <figure class="tw"><img class="thumb cur" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23ECEAE6'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3EIMAGE%2001%3C/text%3E%3C/svg%3E"></figure>
+              <figure class="tw"><img class="thumb" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23E3E0DB'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23ABA69F'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C1BCB5'%20text-anchor='middle'%3EIMAGE%2002%3C/text%3E%3C/svg%3E"></figure>
+              <figure class="tw"><img class="thumb" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23D9D5CF'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23A29D96'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23B8B3AC'%20text-anchor='middle'%3EIMAGE%2003%3C/text%3E%3C/svg%3E"></figure>
+            </div>
+          </div>
+          <div class="p-info">
+            <p class="p-brand" data-e>PERFECTMOOD SELECT</p>
+            <h1 class="p-name" data-e>빈티지 레더 라운지 체어 × 오토만 세트</h1>
+            <div class="p-pricebox">
+              <p class="p-price-was" data-e>2,620,000원</p>
+              <p class="p-price" data-e>2,541,400원</p>
+            </div>
+            <p class="p-desc" data-e>세월이 만든 가죽의 결과 견고한 프레임이 어우러진 라운지 체어입니다. 공간의 중심을 잡아주는 오브제로, 오토만과 함께 구성됩니다.</p>
+            <dl class="p-meta">
+              <div><dt data-e>소재</dt><dd data-e>빈티지 레더, 월넛 프레임</dd></div>
+              <div><dt data-e>사이즈</dt><dd data-e>협의 (실측 후 안내)</dd></div>
+              <div><dt data-e>구성</dt><dd data-e>라운지 체어 1 + 오토만 1</dd></div>
+              <div><dt data-e>배송</dt><dd data-e>주문 확인 후 개별 안내</dd></div>
+            </dl>
+            <div class="p-actions">
+              <a class="btn btn--fill" href="#" data-e>구매 문의</a>
+              <a class="btn btn--ghost" href="https://perfectmood-kr.github.io" data-e>스튜디오 보기</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-detail">
+          <p class="p-detail__label" data-e>DETAIL</p>
+          <div class="d-blocks">
+            <section class="d-block">
+              <h3 data-e>공간의 무게중심</h3>
+              <p data-e>하나의 의자가 공간 전체의 인상을 바꿉니다. 낮고 깊은 좌면과 부드럽게 길들여진 가죽은 시간이 지날수록 더 좋은 표정을 만들어냅니다. 퍼펙트무드가 직접 상태를 확인하고 셀렉트했습니다.</p>
+            </section>
+            <section class="d-block d-img">
+              <img alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='800'%3E%3Crect%20width='1200'%20height='800'%20fill='%23ECEAE6'/%3E%3Ctext%20x='600'%20y='395'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='600'%20y='435'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3EDETAIL%20IMAGE%3C/text%3E%3C/svg%3E">
+              <p class="cap" data-e>디테일 컷 — 편집 모드에서 이미지를 탭하면 교체됩니다.</p>
+            </section>
+            <section class="d-block">
+              <h3 data-e>디테일</h3>
+              <p data-e>스티치 상태, 프레임 결합부, 쿠션 복원력까지 항목별로 점검을 마친 제품입니다. 사용감이 있는 빈티지 제품의 특성은 사진과 안내 문구로 미리 알려드립니다.</p>
+            </section>
+            <section class="d-block d-img">
+              <img alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='800'%3E%3Crect%20width='1200'%20height='800'%20fill='%23E3E0DB'/%3E%3Ctext%20x='600'%20y='395'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23ABA69F'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='600'%20y='435'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C1BCB5'%20text-anchor='middle'%3ESTYLING%20IMAGE%3C/text%3E%3C/svg%3E">
+              <p class="cap" data-e>스타일링 컷</p>
+            </section>
+          </div>
+        </div>
+
+        <div class="p-notice">
+          <details>
+            <summary data-e>배송 안내</summary>
+            <div class="n-body" data-e>결제 확인 후 배송 일정을 개별 안내드립니다. 가구류는 전문 배송 기사가 방문하며, 도서산간 지역은 추가 비용이 발생할 수 있습니다.</div>
+          </details>
+          <details>
+            <summary data-e>교환 · 반품 안내</summary>
+            <div class="n-body" data-e>수령일 기준 7일 이내 접수 가능합니다. 단순 변심 시 왕복 배송비는 구매자 부담이며, 사용 흔적이 있는 경우 교환·반품이 제한될 수 있습니다.</div>
+          </details>
+          <details>
+            <summary data-e>A/S 안내</summary>
+            <div class="n-body" data-e>퍼펙트무드를 통해 구매하신 제품은 상태 점검과 수선 상담을 지원합니다. 자세한 내용은 구매 문의 채널로 연락 주세요.</div>
+          </details>
+        </div>
+      </article>
+
+      <!-- ── product 2 ── -->
+      <article class="product" data-pid="p2">
+        <div class="p-top">
+          <div class="p-gallery">
+            <div class="p-main"><img class="p-mainimg" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23E3E0DB'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23ABA69F'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C1BCB5'%20text-anchor='middle'%3EIMAGE%2001%3C/text%3E%3C/svg%3E"></div>
+            <div class="p-thumbs">
+              <figure class="tw"><img class="thumb cur" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23E3E0DB'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23ABA69F'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C1BCB5'%20text-anchor='middle'%3EIMAGE%2001%3C/text%3E%3C/svg%3E"></figure>
+              <figure class="tw"><img class="thumb" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23D9D5CF'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23A29D96'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23B8B3AC'%20text-anchor='middle'%3EIMAGE%2002%3C/text%3E%3C/svg%3E"></figure>
+            </div>
+          </div>
+          <div class="p-info">
+            <p class="p-brand" data-e>PERFECTMOOD SELECT</p>
+            <h1 class="p-name" data-e>세라믹 테이블 램프</h1>
+            <div class="p-pricebox">
+              <p class="p-price-was" data-e>&nbsp;</p>
+              <p class="p-price" data-e>380,000원</p>
+            </div>
+            <p class="p-desc" data-e>손으로 빚은 듯한 질감의 세라믹 베이스와 패브릭 셰이드. 은은한 점조명으로 공간의 밀도를 높여줍니다.</p>
+            <dl class="p-meta">
+              <div><dt data-e>소재</dt><dd data-e>세라믹, 패브릭 셰이드</dd></div>
+              <div><dt data-e>사이즈</dt><dd data-e>협의 (실측 후 안내)</dd></div>
+              <div><dt data-e>전구</dt><dd data-e>E26 (미포함)</dd></div>
+              <div><dt data-e>배송</dt><dd data-e>주문 확인 후 개별 안내</dd></div>
+            </dl>
+            <div class="p-actions">
+              <a class="btn btn--fill" href="#" data-e>구매 문의</a>
+              <a class="btn btn--ghost" href="https://perfectmood-kr.github.io" data-e>스튜디오 보기</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-detail">
+          <p class="p-detail__label" data-e>DETAIL</p>
+          <div class="d-blocks">
+            <section class="d-block">
+              <h3 data-e>빛으로 만드는 무드</h3>
+              <p data-e>전체 조명을 끄고 점조명 하나만 켜는 순간, 공간의 표정이 달라집니다. 퍼펙트무드가 시공 현장에서도 즐겨 쓰는 조명 연출 방식입니다.</p>
+            </section>
+            <section class="d-block d-img">
+              <img alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='800'%3E%3Crect%20width='1200'%20height='800'%20fill='%23D9D5CF'/%3E%3Ctext%20x='600'%20y='395'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23A29D96'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='600'%20y='435'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23B8B3AC'%20text-anchor='middle'%3EDETAIL%20IMAGE%3C/text%3E%3C/svg%3E">
+              <p class="cap" data-e>점등 컷</p>
+            </section>
+          </div>
+        </div>
+
+        <div class="p-notice">
+          <details>
+            <summary data-e>배송 안내</summary>
+            <div class="n-body" data-e>결제 확인 후 배송 일정을 개별 안내드립니다.</div>
+          </details>
+          <details>
+            <summary data-e>교환 · 반품 안내</summary>
+            <div class="n-body" data-e>수령일 기준 7일 이내 접수 가능합니다. 단순 변심 시 왕복 배송비는 구매자 부담입니다.</div>
+          </details>
+          <details>
+            <summary data-e>A/S 안내</summary>
+            <div class="n-body" data-e>구매 문의 채널로 연락 주시면 상담을 도와드립니다.</div>
+          </details>
+        </div>
+      </article>
+
+      <!-- ── product 3 ── -->
+      <article class="product" data-pid="p3">
+        <div class="p-top">
+          <div class="p-gallery">
+            <div class="p-main"><img class="p-mainimg" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23D9D5CF'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23A29D96'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23B8B3AC'%20text-anchor='middle'%3EIMAGE%2001%3C/text%3E%3C/svg%3E"></div>
+            <div class="p-thumbs">
+              <figure class="tw"><img class="thumb cur" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23D9D5CF'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23A29D96'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23B8B3AC'%20text-anchor='middle'%3EIMAGE%2001%3C/text%3E%3C/svg%3E"></figure>
+              <figure class="tw"><img class="thumb" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23ECEAE6'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3EIMAGE%2002%3C/text%3E%3C/svg%3E"></figure>
+            </div>
+          </div>
+          <div class="p-info">
+            <p class="p-brand" data-e>PERFECTMOOD SELECT</p>
+            <h1 class="p-name" data-e>오크 사이드 테이블</h1>
+            <div class="p-pricebox">
+              <p class="p-price-was" data-e>&nbsp;</p>
+              <p class="p-price" data-e>590,000원</p>
+            </div>
+            <p class="p-desc" data-e>단단한 오크 원목을 깎아 만든 사이드 테이블. 소파 곁, 침대 곁 어디에 두어도 공간을 정돈해 줍니다.</p>
+            <dl class="p-meta">
+              <div><dt data-e>소재</dt><dd data-e>오크 원목, 오일 마감</dd></div>
+              <div><dt data-e>사이즈</dt><dd data-e>협의 (실측 후 안내)</dd></div>
+              <div><dt data-e>원산지</dt><dd data-e>협의</dd></div>
+              <div><dt data-e>배송</dt><dd data-e>주문 확인 후 개별 안내</dd></div>
+            </dl>
+            <div class="p-actions">
+              <a class="btn btn--fill" href="#" data-e>구매 문의</a>
+              <a class="btn btn--ghost" href="https://perfectmood-kr.github.io" data-e>스튜디오 보기</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-detail">
+          <p class="p-detail__label" data-e>DETAIL</p>
+          <div class="d-blocks">
+            <section class="d-block">
+              <h3 data-e>재료가 곧 디자인</h3>
+              <p data-e>결이 살아 있는 오크는 시간이 지나며 색이 깊어집니다. 오일 마감으로 나무 본연의 질감을 그대로 남겼습니다.</p>
+            </section>
+            <section class="d-block d-img">
+              <img alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='800'%3E%3Crect%20width='1200'%20height='800'%20fill='%23ECEAE6'/%3E%3Ctext%20x='600'%20y='395'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='600'%20y='435'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3EDETAIL%20IMAGE%3C/text%3E%3C/svg%3E">
+              <p class="cap" data-e>디테일 컷</p>
+            </section>
+          </div>
+        </div>
+
+        <div class="p-notice">
+          <details>
+            <summary data-e>배송 안내</summary>
+            <div class="n-body" data-e>결제 확인 후 배송 일정을 개별 안내드립니다.</div>
+          </details>
+          <details>
+            <summary data-e>교환 · 반품 안내</summary>
+            <div class="n-body" data-e>수령일 기준 7일 이내 접수 가능합니다. 단순 변심 시 왕복 배송비는 구매자 부담입니다.</div>
+          </details>
+          <details>
+            <summary data-e>A/S 안내</summary>
+            <div class="n-body" data-e>구매 문의 채널로 연락 주시면 상담을 도와드립니다.</div>
+          </details>
+        </div>
+      </article>
+
+    </div><!-- /#products -->
+  </div>
+</main>
+
+<footer class="ft">
+  <p><b data-e>PERFECTMOOD</b></p>
+  <p data-e style="margin-top:8px">interior design studio</p>
+  <button id="editBtn" type="button">EDIT</button>
+</footer>
+
+<!-- 새 상품 템플릿 -->
+<template id="prodTemplate">
+  <article class="product" data-pid="">
+    <div class="p-top">
+      <div class="p-gallery">
+        <div class="p-main"><img class="p-mainimg" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23ECEAE6'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3ENEW%20PRODUCT%3C/text%3E%3C/svg%3E"></div>
+        <div class="p-thumbs">
+          <figure class="tw"><img class="thumb cur" alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='800'%20height='1000'%3E%3Crect%20width='800'%20height='1000'%20fill='%23ECEAE6'/%3E%3Ctext%20x='400'%20y='495'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='400'%20y='535'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3ENEW%20PRODUCT%3C/text%3E%3C/svg%3E"></figure>
+        </div>
+      </div>
+      <div class="p-info">
+        <p class="p-brand" data-e>PERFECTMOOD SELECT</p>
+        <h1 class="p-name" data-e>새 상품 이름</h1>
+        <div class="p-pricebox">
+          <p class="p-price-was" data-e>&nbsp;</p>
+          <p class="p-price" data-e>0원</p>
+        </div>
+        <p class="p-desc" data-e>상품 소개 문구를 입력하세요.</p>
+        <dl class="p-meta">
+          <div><dt data-e>소재</dt><dd data-e>-</dd></div>
+          <div><dt data-e>사이즈</dt><dd data-e>-</dd></div>
+          <div><dt data-e>배송</dt><dd data-e>주문 확인 후 개별 안내</dd></div>
+        </dl>
+        <div class="p-actions">
+          <a class="btn btn--fill" href="#" data-e>구매 문의</a>
+          <a class="btn btn--ghost" href="https://perfectmood-kr.github.io" data-e>스튜디오 보기</a>
+        </div>
+      </div>
+    </div>
+    <div class="p-detail">
+      <p class="p-detail__label" data-e>DETAIL</p>
+      <div class="d-blocks">
+        <section class="d-block">
+          <h3 data-e>소제목</h3>
+          <p data-e>상세 설명을 입력하세요.</p>
+        </section>
+      </div>
+    </div>
+    <div class="p-notice">
+      <details>
+        <summary data-e>배송 안내</summary>
+        <div class="n-body" data-e>결제 확인 후 배송 일정을 개별 안내드립니다.</div>
+      </details>
+      <details>
+        <summary data-e>교환 · 반품 안내</summary>
+        <div class="n-body" data-e>수령일 기준 7일 이내 접수 가능합니다.</div>
+      </details>
+    </div>
+  </article>
+</template>
+
+<script>
+(function(){
+'use strict';
+var PM_PW_HASH='2088290703'; /* 초기 비밀번호 1234 */
+var editing=false, pwHashNew=null;
+var body=document.body;
+function qs(s,r){return (r||document).querySelector(s);}
+function qsa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+function pmHash(s){var h=5381,i;for(i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;}return String(h>>>0);}
+function curHash(){return pwHashNew||PM_PW_HASH;}
+
+/* ── SVG 플레이스홀더 (블록/썸네일 추가용) ── */
+var PH="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='1200'%20height='800'%3E%3Crect%20width='1200'%20height='800'%20fill='%23ECEAE6'/%3E%3Ctext%20x='600'%20y='395'%20font-family='Arial'%20font-size='26'%20letter-spacing='8'%20fill='%23B4AFA8'%20text-anchor='middle'%3EPERFECTMOOD%3C/text%3E%3Ctext%20x='600'%20y='435'%20font-family='Arial'%20font-size='14'%20letter-spacing='4'%20fill='%23C9C5BF'%20text-anchor='middle'%3ENEW%20IMAGE%3C/text%3E%3C/svg%3E";
+
+/* ══ 1. 목록 뷰 빌드 ══ */
+function buildList(){
+  var grid=qs('#listGrid'); if(!grid) return;
+  qsa('[data-runtime]',grid).forEach(function(n){n.remove();});
+  grid.innerHTML='';
+  qsa('.product').forEach(function(p){
+    var pid=p.getAttribute('data-pid');
+    var card=document.createElement('div');
+    card.className='card'; card.setAttribute('data-runtime','1');
+    var ph=document.createElement('div'); ph.className='card__ph';
+    var im=document.createElement('img');
+    var main=qs('.p-mainimg',p); im.src=main?main.src:PH; im.alt='';
+    ph.appendChild(im); card.appendChild(ph);
+    var br=document.createElement('p'); br.className='card__brand';
+    br.textContent=(qs('.p-brand',p)||{}).textContent||''; card.appendChild(br);
+    var nm=document.createElement('p'); nm.className='card__name';
+    nm.textContent=(qs('.p-name',p)||{}).textContent||''; card.appendChild(nm);
+    var pr=document.createElement('p'); pr.className='card__price';
+    pr.textContent=(qs('.p-price',p)||{}).textContent||''; card.appendChild(pr);
+    card.addEventListener('click',function(e){
+      if(e.target.classList.contains('card__del')) return;
+      showProduct(pid);
+    });
+    if(editing){
+      var del=document.createElement('button');
+      del.type='button'; del.className='card__del'; del.textContent='✕';
+      del.setAttribute('data-edit-ui','1'); del.title='상품 삭제';
+      del.addEventListener('click',function(ev){
+        ev.stopPropagation();
+        if(qsa('.product').length<=1){alert('마지막 상품은 삭제할 수 없습니다.');return;}
+        if(!confirm('이 상품을 삭제할까요?')) return;
+        var art=qs('.product[data-pid="'+pid+'"]'); if(art) art.remove();
+        buildList();
+      });
+      card.appendChild(del);
+    }
+    grid.appendChild(card);
+  });
+}
+
+/* ══ 2. 뷰 전환 ══ */
+function showList(){
+  body.classList.remove('mode-detail');
+  qsa('.product').forEach(function(p){p.classList.remove('active');});
+  buildList();
+  window.scrollTo(0,0);
+}
+function showProduct(pid){
+  var target=qs('.product[data-pid="'+pid+'"]');
+  if(!target){showList();return;}
+  qsa('.product').forEach(function(p){p.classList.toggle('active',p===target);});
+  body.classList.add('mode-detail');
+  if(editing) buildProductTools(target);
+  window.scrollTo(0,0);
+}
+qs('#backBtn').addEventListener('click',showList);
+qs('#navShop').addEventListener('click',function(e){e.preventDefault();showList();});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&!editing&&body.classList.contains('mode-detail')) showList();
+});
+
+/* ══ 3. 썸네일 → 메인 이미지 ══ */
+document.addEventListener('click',function(e){
+  if(editing) return;
+  var t=e.target;
+  if(t.classList&&t.classList.contains('thumb')){
+    var p=t.closest('.product'); if(!p) return;
+    var main=qs('.p-mainimg',p); if(main) main.src=t.src;
+    qsa('.thumb',p).forEach(function(th){th.classList.toggle('cur',th===t);});
+  }
+});
+
+/* ══ 4. 편집 모드 ══ */
+function askPassword(){
+  var v=prompt('편집 비밀번호를 입력하세요');
+  if(v===null) return;
+  if(pmHash(v)===curHash()){enterEdit();}
+  else alert('비밀번호가 올바르지 않습니다.');
+}
+qs('#editBtn').addEventListener('click',askPassword);
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&(e.key==='e'||e.key==='E')){e.preventDefault();if(!editing)askPassword();}
+});
+
+function enterEdit(){
+  editing=true;
+  body.classList.add('editing');
+  qsa('[data-e]').forEach(function(el){el.setAttribute('contenteditable','true');});
+  buildEditBar();
+  qsa('.product').forEach(buildProductTools);
+  buildList();
+}
+function exitEdit(){
+  editing=false;
+  body.classList.remove('editing');
+  qsa('[contenteditable]').forEach(function(el){el.removeAttribute('contenteditable');});
+  qsa('[data-edit-ui]').forEach(function(n){n.remove();});
+  buildList();
+}
+
+function buildEditBar(){
+  if(qs('#editBar')) return;
+  var bar=document.createElement('div');
+  bar.id='editBar'; bar.setAttribute('data-edit-ui','1');
+  function mk(label,fn,primary){
+    var b=document.createElement('button'); b.type='button'; b.textContent=label;
+    if(primary) b.className='primary';
+    b.addEventListener('click',fn); bar.appendChild(b); return b;
+  }
+  mk('저장',saveEdits,true);
+  mk('＋ 상품 추가',addProduct);
+  mk('비밀번호 변경',changePw);
+  mk('종료',function(){ if(confirm('저장하지 않은 변경은 사라집니다. 편집을 종료할까요?')) exitEdit(); });
+  body.appendChild(bar);
+  var hint=document.createElement('div');
+  hint.className='edit-hint'; hint.setAttribute('data-edit-ui','1');
+  hint.textContent='텍스트는 탭해서 수정 · 이미지는 클릭해서 교체 · 버튼은 클릭해서 링크 변경';
+  body.appendChild(hint);
+}
+
+function changePw(){
+  var a=prompt('새 비밀번호를 입력하세요'); if(!a) return;
+  var b2=prompt('한 번 더 입력하세요'); if(b2===null) return;
+  if(a!==b2){alert('두 입력이 다릅니다.');return;}
+  pwHashNew=pmHash(a);
+  alert('저장 시 새 비밀번호가 적용됩니다.');
+}
+
+/* ── 상품별 편집 도구 ── */
+function buildProductTools(p){
+  if(!editing) return;
+  qsa('[data-edit-ui]',p).forEach(function(n){n.remove();});
+  /* 썸네일: 삭제 배지 + 추가 버튼 */
+  qsa('.tw',p).forEach(function(tw){
+    var del=document.createElement('button');
+    del.type='button'; del.className='tw-del'; del.textContent='✕';
+    del.setAttribute('data-edit-ui','1'); del.title='썸네일 삭제';
+    del.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      if(qsa('.tw',p).length<=1){alert('썸네일은 최소 1장 필요합니다.');return;}
+      tw.remove(); buildProductTools(p);
+    });
+    tw.appendChild(del);
+  });
+  var thumbs=qs('.p-thumbs',p);
+  if(thumbs){
+    var add=document.createElement('button');
+    add.type='button'; add.textContent='＋';
+    add.setAttribute('data-edit-ui','1'); add.title='썸네일 추가';
+    add.style.cssText='width:72px;height:90px;border:1px dashed #bbb;background:#fff;color:#999;font-size:20px';
+    add.addEventListener('click',function(){
+      pickImage(function(dataUrl){
+        var fig=document.createElement('figure'); fig.className='tw';
+        var im=document.createElement('img'); im.className='thumb'; im.alt=''; im.src=dataUrl;
+        fig.appendChild(im); thumbs.insertBefore(fig,add);
+        buildProductTools(p);
+      });
+    });
+    thumbs.appendChild(add);
+  }
+  /* 상세 블록: ↑ ↓ ✕ + 블록 추가 버튼 */
+  var blocks=qs('.d-blocks',p);
+  if(blocks){
+    qsa('.d-block',blocks).forEach(function(bl){
+      var tools=document.createElement('div');
+      tools.className='d-tools'; tools.setAttribute('data-edit-ui','1');
+      function tb(label,fn,title){
+        var b=document.createElement('button'); b.type='button'; b.textContent=label; b.title=title;
+        b.addEventListener('click',fn); tools.appendChild(b);
+      }
+      tb('↑',function(){var pv=bl.previousElementSibling;if(pv)blocks.insertBefore(bl,pv);},'위로');
+      tb('↓',function(){var nx=bl.nextElementSibling;if(nx)blocks.insertBefore(nx,bl);},'아래로');
+      tb('✕',function(){if(confirm('이 블록을 삭제할까요?'))bl.remove();},'삭제');
+      bl.appendChild(tools);
+    });
+    var addWrap=document.createElement('div');
+    addWrap.className='d-add'; addWrap.setAttribute('data-edit-ui','1');
+    function ab(label,fn){
+      var b=document.createElement('button'); b.type='button'; b.textContent=label;
+      b.addEventListener('click',fn); addWrap.appendChild(b);
+    }
+    ab('＋ 텍스트 블록',function(){
+      var s=document.createElement('section'); s.className='d-block';
+      s.innerHTML='<h3 data-e>소제목</h3><p data-e>내용을 입력하세요.</p>';
+      blocks.appendChild(s); applyEditable(s); buildProductTools(p);
+    });
+    ab('＋ 이미지 블록',function(){
+      pickImage(function(dataUrl){
+        var s=document.createElement('section'); s.className='d-block d-img';
+        var im=document.createElement('img'); im.alt=''; im.src=dataUrl;
+        var cap=document.createElement('p'); cap.className='cap'; cap.setAttribute('data-e','1'); cap.textContent='이미지 설명';
+        s.appendChild(im); s.appendChild(cap);
+        blocks.appendChild(s); applyEditable(s); buildProductTools(p);
+      });
+    });
+    blocks.parentNode.appendChild(addWrap);
+  }
+}
+function applyEditable(root){
+  qsa('[data-e]',root).forEach(function(el){el.setAttribute('contenteditable','true');});
+  if(root.hasAttribute&&root.hasAttribute('data-e')) root.setAttribute('contenteditable','true');
+}
+
+/* ── 상품 추가 ── */
+function addProduct(){
+  var tpl=qs('#prodTemplate');
+  var art=tpl.content.firstElementChild.cloneNode(true);
+  var pid='p'+Date.now();
+  art.setAttribute('data-pid',pid);
+  qs('#products').appendChild(art);
+  if(editing){applyEditable(art);}
+  buildList();
+  showProduct(pid);
+  alert('새 상품이 추가되었습니다. 이름·가격·이미지를 수정하세요.');
+}
+
+/* ══ 5. 이미지 교체 (편집 모드에서 img 클릭) ══ */
+function pickImage(cb){
+  var input=document.createElement('input');
+  input.type='file'; input.accept='image/*';
+  input.addEventListener('change',function(){
+    var f=input.files&&input.files[0]; if(!f) return;
+    var rd=new FileReader();
+    rd.onload=function(){shrinkImage(String(rd.result),cb);};
+    rd.readAsDataURL(f);
+  });
+  input.click();
+}
+function shrinkImage(src,cb){
+  var im=new Image();
+  im.onload=function(){
+    var MAX=1600, w=im.naturalWidth, h=im.naturalHeight;
+    if(w<=MAX&&h<=MAX&&src.indexOf('image/jpeg')>-1){cb(src);return;}
+    var sc=Math.min(1,MAX/Math.max(w,h));
+    var cv=document.createElement('canvas');
+    cv.width=Math.round(w*sc); cv.height=Math.round(h*sc);
+    cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+    cb(cv.toDataURL('image/jpeg',0.82));
+  };
+  im.onerror=function(){cb(src);};
+  im.src=src;
+}
+document.addEventListener('click',function(e){
+  if(!editing) return;
+  var t=e.target;
+  /* 편집 UI 버튼은 통과 */
+  if(t.closest('[data-edit-ui]')) return;
+  /* 이미지 클릭 → 교체 */
+  var img=t.closest('img');
+  if(img){
+    e.preventDefault(); e.stopPropagation();
+    /* 목록 카드 이미지는 해당 상품 메인 이미지를 교체 */
+    var card=img.closest('.card');
+    pickImage(function(dataUrl){
+      if(card){
+        var idx=qsa('.card','#listGrid'?qs('#listGrid'):null).indexOf(card);
+        var prods=qsa('.product');
+        if(idx>-1&&prods[idx]){var m=qs('.p-mainimg',prods[idx]);if(m)m.src=dataUrl;var t1=qs('.thumb',prods[idx]);if(t1&&t1.classList.contains('cur'))t1.src=dataUrl;}
+        buildList();
+      }else{
+        img.src=dataUrl;
+        /* 메인/현재 썸네일 동기화 */
+        var p=img.closest('.product');
+        if(p&&img.classList.contains('thumb')&&img.classList.contains('cur')){
+          var m2=qs('.p-mainimg',p); if(m2) m2.src=dataUrl;
+        }
+        if(p&&img.classList.contains('p-mainimg')){
+          var curTh=qs('.thumb.cur',p); if(curTh) curTh.src=dataUrl;
+        }
+      }
+    });
+    return;
+  }
+  /* 링크 버튼 클릭 → 주소 변경 */
+  var a=t.closest('a.btn');
+  if(a){
+    e.preventDefault(); e.stopPropagation();
+    var url=prompt('버튼 링크 주소 (예: https://pf.kakao.com/..., mailto:메일주소)',a.getAttribute('href')||'');
+    if(url!==null&&url!=='') a.setAttribute('href',url);
+    return;
+  }
+  /* 편집 모드에서 일반 링크 이동 차단 */
+  var anyA=t.closest('a');
+  if(anyA&&!anyA.isContentEditable){e.preventDefault();}
+},true);
+
+/* ══ 6. 저장 ══ */
+function saveEdits(){
+  var clone=document.documentElement.cloneNode(true);
+  qsa('[data-edit-ui]',clone).forEach(function(n){n.remove();});
+  qsa('[data-runtime]',clone).forEach(function(n){n.remove();});
+  qsa('[contenteditable]',clone).forEach(function(n){n.removeAttribute('contenteditable');});
+  var b=clone.querySelector('body');
+  if(b){b.classList.remove('editing');b.classList.remove('mode-detail');b.removeAttribute('style');}
+  qsa('.product',clone).forEach(function(p,i){p.classList.toggle('active',i===0);});
+  var grid=clone.querySelector('#listGrid'); if(grid) grid.innerHTML='';
+  if(pwHashNew){
+    qsa('script',clone).forEach(function(s){
+      if(s.textContent.indexOf("PM_PW_HASH='")>-1){
+        s.textContent=s.textContent.replace(/PM_PW_HASH='\d+'/,"PM_PW_HASH='"+pwHashNew+"'");
+      }
+    });
+  }
+  var html='<!DOCTYPE html>\n'+clone.outerHTML;
+  var d=new Date();
+  function z(n){return (n<10?'0':'')+n;}
+  var name='퍼펙트무드_상품상세_수정_'+d.getFullYear()+z(d.getMonth()+1)+z(d.getDate())+'_'+z(d.getHours())+z(d.getMinutes())+'.html';
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},2000);
+  alert('저장 완료: 다운로드 폴더의 "'+name+'" 파일이 새 버전입니다.\n이 파일을 배포하면 사이트에 반영됩니다.');
+}
+
+/* ══ init ══ */
+buildList();
+})();
+</script>
+</body>
+</html>
